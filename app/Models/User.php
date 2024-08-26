@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -20,6 +21,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'forgout_password_code',
+        'forgout_password_expires',
+        'role_id'
     ];
 
     /**
@@ -43,5 +47,20 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    public function Membro()
+    {
+        return $this->hasOne(Membro::class, 'user_id');
+    }
+    
+    public static function newUser(string $name, string $email, string $password, int $role_id){
+        return User::create([
+            'name' => $name,
+            'email' => $email,
+            'password' => Hash::make($password),
+            'role_id' => $role_id
+        ]);
     }
 }
