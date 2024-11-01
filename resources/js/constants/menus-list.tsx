@@ -15,7 +15,7 @@ export const dashboardMenu: DashboardMenuItemType[] = [
     },
     {
         title: "Membros",
-        href: "/membros",
+        href: "/dashboard/membros",
         icon: Users,
     },
 ];

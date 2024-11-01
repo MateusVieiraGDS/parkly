@@ -21,9 +21,9 @@ class AdminSeeder extends Seeder
         DB::table('users')->insert([
             [
                 'name' => 'master admin',
-                'email' => 'master@admin.admin',
+                'email' => 'mateusvieirap010@gmail.com',
                 'email_verified_at' => now(),
-                'password' => Hash::make('m_admin_2023_passwd'),
+                'password' => Hash::make('123456789'),
                 'role_id' => 1,
                 'created_at' => $time,
                 'updated_at' => $time,

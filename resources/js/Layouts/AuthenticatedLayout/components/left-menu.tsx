@@ -40,7 +40,7 @@ import { cn } from '@/lib/utils';
 export const LeftMenu = ({}) => {
 
     const isActivePage = (href: string) => {
-        return window.location.pathname.startsWith(href);
+        return window.location.pathname == href;
     };
 
     return (

@@ -26,7 +26,7 @@ class UploadFile extends Model
     protected function pathname(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => !empty($value)? Storage::url($value) : ''
+            get: fn ($value) => !empty($value)? Storage::disk('s3')->url($value) : ''
         );
     }
 }

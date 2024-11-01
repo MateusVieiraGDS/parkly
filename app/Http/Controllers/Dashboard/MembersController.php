@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\UploadTrait;
+use App\Http\Requests\CadastroRequest;
+use App\Http\Requests\ContactUpdateRequest;
 use App\Models\Batismo;
 use App\Models\City;
 use App\Models\Consagracao;
@@ -19,32 +21,210 @@ use DateTime;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
-function onlyNumber($value)
-{
-    return preg_replace('/[^0-9]/', '', (string) $value);
-}
+use function App\Helpers\onlyNumber;
+use function App\Helpers\toSqlDate;
 
-function toSqlDate($date)
-{
-    $date = DateTime::createFromFormat('d/m/Y', $date);
-    if ($date === false) 
-        throw new Exception('Erro ao formatar a data.');
-    $dataMySQL = $date->format('Y-m-d');
-    return $dataMySQL;
-}
-class CadastroController extends Controller
+class MembersController extends Controller
 {
     use UploadTrait;
     /**
-     * estou finalizando o cadastro, estava fazendo o negocio do estado, falta testar e ve como ficou, tem a situação da imagem também,
-     * para a edição e os componentes não controlados
-     * 
+     * no enderecoContato falta trazer os campos preenchidos no momento que entrar na pagina, além de precisar fazer um método para upload dos dados pessoais ou ajustar
+     * finalizei alguns ajustes no helpers e aparentemente está subindo certinho, ajustei o sonner também, agora é adicionar também os campos na migrate
+     * para armazenar o certificado de casamento, divorcio e obito, alem do comprovante de residencia
      */
+    public function index()
+    {
+        $states = State::all();
+        return Inertia::render('Dashboard/members/index', [
+            'states' => $states,
+        ]);
+    }
+
+    public function create()
+    {
+        $states = State::with('cities')->get();
+        return Inertia::render('Dashboard/members/create/index', [
+            'states_cities' => $states,
+        ]);
+    }    
+
+    public function edit($id){
+        $user = User::with([
+            'membro.fileCertNascimento',
+            'membro.fileDocImage',
+            'membro.fileFoto',
+            'membro.CargoAtual',
+            'membro.TodosCargos',
+            'membro.Grupo',
+            'membro.Congregacao',
+            'membro.DadosComplmentar',
+            'membro.Enderecos',
+            'membro.Telefones',
+            'membro.Disciplinas',
+            'membro.Batismo',
+            'membro.Casamentos',
+            'membro.nat_state',
+            'membro.nat_city',
+            'membro.rg_state',
+        ])->find($id);
+
+        $states = State::with('cities')->get();
+        return Inertia::render('Dashboard/members/edit/index', [
+            'states_cities' => $states,
+            'user' => $user,
+        ]);
+    }
+
+    public function updateContact(ContactUpdateRequest $request, $id){
+        $dataRequest = $request->validated();
+        $user = User::find($id);
+       
+        try{
+            
+            DB::beginTransaction();
+            
+            $user->email = $dataRequest['email'];
+            $user->save();
+            
+            $filesUploaded = $this->uploadManyFiles($request, [
+                'imageFileResidencia'
+            ]);     
+
+            $member = $user->membro;
+
+            $telefone = Telefone::where('membro_id', $member->id)->first();
+            if($telefone){
+                $telefone->numero = onlyNumber($dataRequest['telefone']);
+                $telefone->save();
+            }else{
+                Telefone::create([
+                    'membro_id' => $member->id,
+                    'tipo' => 'celular',
+                    'numero' => onlyNumber($dataRequest['telefone']),
+                ]);
+            }
+
+
+            $stateEnd = State::where('uf', $dataRequest['uf'])->first();
+            $cityEnd = City::find($dataRequest['cidade']);
+            $endereco = Endereco::where('membro_id', $member->id)->first();
+
+            if($endereco){
+                $endereco->cep = onlyNumber($dataRequest['cep']);
+                $endereco->rua = $dataRequest['rua'];
+                $endereco->numero = $dataRequest['numero'];
+                $endereco->complemento = $dataRequest['complemento'];
+                $endereco->bairro = $dataRequest['bairro'];
+                $endereco->city_id = $cityEnd->id;
+                $endereco->state_id = $stateEnd->id;
+                $endereco->save();
+            }else{
+                Endereco::create([
+                    'membro_id' => $member->id,
+                    'cep' => onlyNumber($dataRequest['cep']),
+                    'rua' => $dataRequest['rua'],
+                    'numero' => $dataRequest['numero'],
+                    'complemento' => $dataRequest['complemento'],
+                    'bairro' => $dataRequest['bairro'],
+                    'city_id' => $cityEnd->id,
+                    'state_id' => $stateEnd->id,
+                ]);
+            }
+            
+            DB::commit();
+
+            return redirect(route("dashboard.membros.edit", ["id" => $user->id]));
+        }catch(\Exception $e){             
+            foreach($filesUploaded as $file)
+                $this->deleteFile($file->pathname);                 
+            DB::rollBack();
+            return redirect()->back()->withErrors([
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function NewMember(CadastroRequest $request)
+    {
+        $dataRequest = $request->validated();
+
+        try {
+            // Executa a transação
+            $user = DB::transaction(function () use ($dataRequest, $request) {
+                // Criação do usuário
+                $user = User::newUser(
+                    $dataRequest['nome'],
+                    "{$dataRequest['cpf']}@adtoyama.toyama",
+                    Str::random(20),
+                    4
+                );
+
+                // Upload dos arquivos
+                
+                $filesUploaded = $this->uploadManyFiles($request, [
+                    'imageFile34', 
+                    'imageFileDoc', 
+                    'imageFileNasc',
+                    'imageFileCas',
+                    'imageFileDiv',
+                    'imageFileObt',
+                ]);
+
+                // Obtenção dos dados de estado e cidade
+                $stateNatur = State::where('uf', $dataRequest['estado'])->first();
+                $cityNatur = City::find($dataRequest['cidade']);
+                $stateDoc = State::where('uf', $dataRequest['rgUf'])->first();
+
+                // Verificação de existência
+                if (!$stateNatur || !$cityNatur || !$stateDoc) {
+                    throw new \Exception('Erro: Estado ou cidade não encontrado.');
+                }
+
+                // Criação do membro
+                $member = Membro::create([
+                    'uuid' => Str::uuid(),
+                    'rg' => onlyNumber($dataRequest['rg']),
+                    'cpf' => onlyNumber($dataRequest['cpf']),
+                    'nasc' => $dataRequest['dataNasc'],
+                    'sexo' => $dataRequest['sexo'],
+                    'estado_civil' => $dataRequest['estadoCivil'],
+                    'nat_state_id' => $stateNatur->id,
+                    'nat_city_id' => $cityNatur->id,
+                    'rg_state_id' => $stateDoc->id,
+                    'user_id' => $user->id,
+                    'congregacao_id' => 1,
+                    'file_cert_nascimento' => $filesUploaded['imageFileNasc']->id ?? null,
+                    'file_doc_image' => $filesUploaded['imageFileDoc']->id ?? null,
+                    'file_foto' => $filesUploaded['imageFile34']->id ?? null,
+                ]);
+
+                // Criação dos dados complementares
+                DadosComplementar::create([
+                    'membro_id' => $member->id,
+                    'nome_pai' => $dataRequest['nomePai'],
+                    'nome_mae' => $dataRequest['nomeMae'],
+                ]);
+
+                return $user;
+            });
+
+            return redirect(route("dashboard.membros.edit", ["id" => $user->id]));
+
+        } catch (\Exception $e) {
+            foreach($filesUploaded as $file)
+                $this->deleteFile($file->pathname); 
+            return redirect()->back()->withErrors(['create' => $e->getMessage()]);
+        }
+    }
+
 
     
-    public function NewMember(CadastroRequest $request){       
+    public function NewMember2(Request $request){       
         
 
         $dataRequest = $request->validated();
@@ -53,7 +233,6 @@ class CadastroController extends Controller
         $filesUploaded = [];
         $filesUploadedConsagracao = [];
 
-        // Iniciar a transação para garantir integridade total do cadastro, caso algum erro ocorra desfaz tudo
         DB::beginTransaction();
 
         try{

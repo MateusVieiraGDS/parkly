@@ -96,9 +96,6 @@ class Membro extends Model
         return $this->hasMany(Disciplina::class, 'membro_id');
     }
 
-    public function Situacao(){
-        return $this->belongsTo(MembroSituacao::class, 'situacao_id');
-    }
 
     public function Batismo(){
         return $this->hasOne(Batismo::class, 'membro_id');
@@ -107,5 +104,20 @@ class Membro extends Model
     public function Casamentos(){
         return $this->hasMany(Casamento::class, 'membro_conjuge_1')
             ->union($this->hasMany(Casamento::class, 'membro_conjuge_2'));
+    }
+
+    public function nat_state()
+    {
+        return $this->belongsTo(State::class, 'nat_state_id');
+    }
+
+    public function nat_city()
+    {
+        return $this->belongsTo(City::class, 'nat_city_id');
+    }
+
+    public function rg_state()
+    {
+        return $this->belongsTo(State::class, 'rg_state_id');
     }
 }

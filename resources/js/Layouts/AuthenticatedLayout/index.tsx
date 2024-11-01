@@ -40,10 +40,10 @@ import { dashboardMenu } from '@/constants/menus-list';
 export default function AuthenticatedLayout({ children, showTitle = true }: PropsWithChildren<{header?: ReactNode, showTitle?: boolean }>) {
 
     const getTitle = () => {
-      if(!showTitle) return '';
+      if(!showTitle) return <></>;
 
-      let nowUrl = window.location.pathname;
-      const menu = dashboardMenu.find((menu) => nowUrl.startsWith(menu.href));
+      let nowUrl: any = window.location.pathname;
+      const menu = dashboardMenu.find((menu) => nowUrl == menu.href);
       return menu ? 
         <div className="flex items-center">
             <h1 className="text-lg font-semibold md:text-2xl">{menu.title}</h1>

@@ -9,6 +9,7 @@ import { ThemeProvider } from "./components/theme-provider";
 //import NProgress from "nprogress";
 import { router } from "@inertiajs/react";
 import React from "react";
+import { Toaster } from "sonner";
 
 const appName = import.meta.env.VITE_APP_NAME || "Laravel";
 
@@ -24,6 +25,7 @@ createInertiaApp({
         root.render(
             <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
                 <App {...props} />
+                <Toaster />
             </ThemeProvider>
         );
     },
