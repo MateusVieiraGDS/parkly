@@ -1,4 +1,4 @@
-import { Home, LucideProps, Users } from "lucide-react";
+import { Banknote, Car, Handshake, Home, LucideProps, Users } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
 
@@ -14,8 +14,18 @@ export const dashboardMenu: DashboardMenuItemType[] = [
         icon: Home,
     },
     {
-        title: "Membros",
-        href: "/dashboard/membros",
-        icon: Users,
+        title: "Carros",
+        href: "/dashboard/carros",
+        icon: Car,
+    },
+    {
+        title: "Mensalistas",
+        href: "/dashboard/mensalistas",
+        icon: Handshake,
+    },
+    {
+        title: "Saída",
+        href: "/dashboard/saidas",
+        icon: Banknote,
     },
 ];

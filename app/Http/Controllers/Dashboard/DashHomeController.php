@@ -10,7 +10,9 @@ class DashHomeController extends Controller
 {
     public function index(){
         
-        //retorna a view com inertia
+
+        
+
         return Inertia::render('Dashboard/home/index');
     }
 }

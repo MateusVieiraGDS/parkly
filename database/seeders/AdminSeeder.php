@@ -24,7 +24,6 @@ class AdminSeeder extends Seeder
                 'email' => 'mateusvieirap010@gmail.com',
                 'email_verified_at' => now(),
                 'password' => Hash::make('123456789'),
-                'role_id' => 1,
                 'created_at' => $time,
                 'updated_at' => $time,
             ]

@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 trait UploadTrait
 {    
-    private function upload(UploadedFile $file, $path = '', $disk = 's3', $visibility = 'public'): string|false
+    private function upload(UploadedFile $file, $path = '', $disk = 'do', $visibility = 'public'): string|false
     {
         $path = !empty($path) ? $path : $this->folder();
         if( $visibility === 'private') {
@@ -17,7 +17,7 @@ trait UploadTrait
         return $file->storePublicly($path, $disk);
     }
 
-    private function deleteFile(string $path = null, $disk = 's3'): bool
+    private function deleteFile(string $path = null, $disk = 'do'): bool
     {
         if (empty($path) || $path == null) {
             return false;
