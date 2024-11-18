@@ -62,7 +62,8 @@ class CheckinController extends Controller
         $createdAtFormatted = $ticket->created_at->format('d/m/Y H:i');
         
         return response()->json([
-            'ticket_number' => Crypt::encrypt($ticket->id),
+            'ticket_code' => Crypt::encrypt($ticket->id),
+            'ticket_number' => $ticket->id,
             'entry_time' => $createdAtFormatted,
         ], 201);
     }

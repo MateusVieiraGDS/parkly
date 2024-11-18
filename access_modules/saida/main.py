@@ -5,18 +5,17 @@ from speech_handler import SpeechHandler
 from cancela_handler import CancelaHandler
 import time
 
-
 class QRCodeCheckoutHandler:
     def __init__(self):
         self.api_handler = ApiHandler()
         self.speech_handler = SpeechHandler()
-        self.cancela_handler = CancelaHandler()
+        self.cancela_handler = CancelaHandler(porta='COM4', baudrate=9600)
         self.running = True
         self.processing = False  # Flag para evitar múltiplas leituras simultâneas
         self.qr_detector = cv2.QRCodeDetector()
 
     def start_camera(self):
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         print("Iniciando a leitura de QR Codes. Pressione 'q' para sair.")
 
         while self.running:
@@ -44,11 +43,14 @@ class QRCodeCheckoutHandler:
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 print("Saindo...")
                 self.running = False
-
         cap.release()
         cv2.destroyAllWindows()
+        self.cancela_handler.fechar_conexao()
 
     def process_qrcode(self, qr_data):
+        """
+        Processa o QR Code detectado e envia o comando para abrir a cancela.
+        """
         try:
             response_data = self.api_handler.send_checkout(qr_data)
             if response_data:
@@ -64,7 +66,6 @@ class QRCodeCheckoutHandler:
         finally:
             # Libera o processamento para permitir novas leituras
             self.processing = False
-
 
 if __name__ == "__main__":
     handler = QRCodeCheckoutHandler()

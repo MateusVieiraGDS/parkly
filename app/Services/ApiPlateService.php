@@ -60,6 +60,7 @@ class ApiPlateService
      * @throws \Exception Se o motor de detecção configurado não for válido.
      */
     public static function detectLicensePlate($imagePath){
+        return "FOS0G08";
         $engine = env('DETECT_PLATE_ENGINE', 'ollama');
 
         /* if($engine == 'aws')
