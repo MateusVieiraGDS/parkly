@@ -118,7 +118,7 @@ export const Header = ({}) =>{
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Link href="/logout" method="post" as="button">
-                  Logout
+                  Sair
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>

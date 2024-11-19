@@ -38,20 +38,21 @@ class MainHandler:
         cv2.destroyAllWindows()
         self.cancela_handler.fechar_conexao()
 
-    def processar_entrada(self, frame):
-        self.speech_handler.speak("Olá! Bem-vindo ao Parkly! Aguarde a impressão do seu ticket.")
+    def processar_entrada(self, frame):        
         image_path = "captured_image.jpg"
         cv2.imwrite(image_path, frame)
         print("Imagem capturada.")
         threading.Thread(target=self.process_image, args=(image_path,), daemon=True).start()
 
     def process_image(self, image_path):
-        response_data = self.api_handler.send_image(image_path)
+        response_data, success = self.api_handler.send_image(image_path)
         if response_data:
-            qr_data = response_data['ticket_code']
-            qr_image_path = self.print_handler.generate_qrcode(qr_data)
-            self.print_handler.print_qrcode(qr_image_path, response_data['ticket_number'])
-            self.cancela_handler.abrir_cancela()
+            self.speech_handler.speak(response_data['message'])
+            if(success):                
+                qr_data = response_data['ticket_code']
+                qr_image_path = self.print_handler.generate_qrcode(qr_data)
+                self.print_handler.print_qrcode(qr_image_path, response_data['ticket_number'])
+                self.cancela_handler.abrir_cancela()
 
 if __name__ == "__main__":
     handler = MainHandler()

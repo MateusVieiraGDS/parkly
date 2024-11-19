@@ -24,7 +24,7 @@ export const dashboardMenu: DashboardMenuItemType[] = [
         icon: Handshake,
     },
     {
-        title: "Saída",
+        title: "Tickets",
         href: "/dashboard/saidas",
         icon: Banknote,
     },

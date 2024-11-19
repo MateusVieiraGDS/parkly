@@ -8,21 +8,29 @@ class ApiHandler:
     def send_image(self, image_path):
         if not self.lock.acquire(blocking=False):
             print("Aguardando finalização do processo anterior.")
-            return None
+            return None, False  # Retorna uma tupla indicando falha na aquisição do lock
 
         try:
             url = "http://localhost/api/checkin"
-            files = {'image': open(image_path, 'rb')}
-            response = requests.post(url, files=files)
+            with open(image_path, 'rb') as image_file:
+                files = {'image': image_file}
+                response = requests.post(url, files=files)
+
             if response.status_code == 201:
                 data = response.json()
                 print("Resposta do servidor:", data)
-                return data
+                success = True
+                return data, success  # Retorna uma tupla
+            elif response.status_code == 422:
+                data = response.json()
+                print("Erro de validação:", data)
+                success = False
+                return data, success  # Retorna uma tupla
             else:
                 print("Erro na requisição:", response.status_code)
-                return None
+                return None, False  # Retorna uma tupla indicando erro
         except Exception as e:
             print("Erro ao fazer a requisição:", e)
-            return None
+            return None, False  # Retorna uma tupla indicando falha geral
         finally:
             self.lock.release()

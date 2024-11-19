@@ -58,7 +58,7 @@ const DashboardHome = ({ dashboard }: any) => {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">R$ {receitaDoDia.toFixed(2)}</div>
+              <div className="text-2xl font-bold">R$ {parseFloat(receitaDoDia).toFixed(2)}</div>
             </CardContent>
           </Card>
           {/* Valor da Hora Card */}
@@ -68,7 +68,7 @@ const DashboardHome = ({ dashboard }: any) => {
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">R$ {valorHora.toFixed(2)}</div>
+              <div className="text-2xl font-bold">R$ {parseFloat(valorHora).toFixed(2)}</div>
               <p className="text-xs text-muted-foreground">Atualizado hoje</p>
             </CardContent>
           </Card>

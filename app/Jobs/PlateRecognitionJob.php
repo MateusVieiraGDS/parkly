@@ -30,7 +30,7 @@ class PlateRecognitionJob implements ShouldQueue
 
     public function handle()
     {
-        //try {
+        try {
             // Faz o reconhecimento da placa usando Ollama
             /* $responsePlate = ApiPlateService::sendImageToOllama($this->imagePath); */
             $responsePlate = ApiPlateService::detectLicensePlate($this->imagePath);
@@ -42,10 +42,10 @@ class PlateRecognitionJob implements ShouldQueue
                 Log::warning("Reconhecimento de placa falhou para o ticket ID {$this->ticketId}");
                 throw new Exception("Reconhecimento de placa falhou para o ticket ID {$this->ticketId}");
             }
-        /* } catch (Exception $e) {
+        } catch (Exception $e) {
             Log::error("Erro no reconhecimento da placa: " . $e->getMessage());
             // Lança a exceção para permitir que o Job seja re-tentado
             throw $e;
-        } */
+        }
     }
 }

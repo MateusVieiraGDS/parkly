@@ -102,12 +102,12 @@ const DashboardPayment = ({ tickets }: any) => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-2 text-left font-semibold">ID</th>
-              <th className="px-4 py-2 text-left font-semibold">Valor Hora</th>
-              <th className="px-4 py-2 text-left font-semibold">Data de Entrada</th>
-              <th className="px-4 py-2 text-left font-semibold">Status de Pagamento</th>
-              <th className="px-4 py-2 text-left font-semibold">Status de Saída</th>
-              <th className="px-4 py-2 text-left font-semibold">Ações</th>
+              <th className="px-4 py-2 text-center font-semibold">ID</th>
+              <th className="px-4 py-2 text-center font-semibold">Valor Hora</th>
+              <th className="px-4 py-2 text-center font-semibold">Data de Entrada</th>
+              <th className="px-4 py-2 text-center font-semibold">Status de Pagamento</th>
+              <th className="px-4 py-2 text-center font-semibold">Saída</th>
+              <th className="px-4 py-2 text-center font-semibold">Ações</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -126,10 +126,10 @@ const DashboardPayment = ({ tickets }: any) => {
                 <td className="px-4 py-2">
                   <span
                     className={`px-2 py-1 rounded-full text-sm font-semibold ${
-                      ticket.payment ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                      (ticket.payment || ticket.client_id) ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {ticket.payment ? "Pago" : "Não Pago"}
+                    {ticket.payment ? "Pago" : (ticket.client_id ? "Mensalista" : "Não Pago")}
                   </span>
                 </td>
 
@@ -140,7 +140,7 @@ const DashboardPayment = ({ tickets }: any) => {
                       ticket.saida ? "bg-blue-100 text-blue-800" : "bg-yellow-100 text-yellow-800"
                     }`}
                   >
-                    {ticket.saida ? "Saiu" : "Ainda no local"}
+                    {ticket.saida ? formatDate(ticket.saida) : "Ainda no local"}
                   </span>
                 </td>
 
@@ -175,8 +175,8 @@ const DashboardPayment = ({ tickets }: any) => {
               <p><strong>ID:</strong> {exitTicket.id}</p>
               <p><strong>Valor Hora:</strong> R$ {exitTicket.valor_hora}</p>
               <p><strong>Status de Pagamento:</strong> 
-                <span className={`font-bold text-white  px-2 py-1 rounded-lg ml-2 ${exitTicket.payment ? 'bg-green-600' : 'bg-red-600'}`}>
-                  {exitTicket.payment ? "Pago" : "Não Pago"}
+                <span className={`font-bold text-white  px-2 py-1 rounded-lg ml-2 ${(exitTicket.payment || selectedTicket.client_id) ? 'bg-green-600' : 'bg-red-600'}`}>
+                  {exitTicket.payment ? "Pago" : (exitTicket.client_id ? "Mensalista" : "Não Pago")}
                 </span>
               </p>
               <p><strong>Data de Pagamento:</strong> {exitTicket.payment ? formatDate(exitTicket.payment.created_at) : <span className = "opacity-60">Sem Registro</span>}</p>
@@ -201,8 +201,8 @@ const DashboardPayment = ({ tickets }: any) => {
               <p><strong>ID:</strong> {selectedTicket.id}</p>
               <p><strong>Valor Hora:</strong> R$ {selectedTicket.valor_hora}</p>
               <p><strong>Status de Pagamento:</strong> 
-                <span className={`font-bold text-white  px-2 py-1 rounded-lg ml-2 ${selectedTicket.payment ? 'bg-green-600' : 'bg-red-600'}`}>
-                  {selectedTicket.payment ? "Pago" : "Não Pago"}
+                <span className={`font-bold text-white  px-2 py-1 rounded-lg ml-2 ${(selectedTicket.payment || selectedTicket.client_id) ? 'bg-green-600' : 'bg-red-600'}`}>
+                  {selectedTicket.payment ? "Pago" : (selectedTicket.client_id ? "Mensalista" : "Não Pago")}
                 </span>
               </p>
               <p><strong>Data de Pagamento:</strong> {selectedTicket.payment ? formatDate(selectedTicket.payment.created_at) : <span className = "opacity-60">Sem Registro</span>}</p>

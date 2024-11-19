@@ -21,12 +21,12 @@ class ApiPlateService
     {
         $bearerToken = env('API_PLATE_BEARER_TOKEN');
         $deviceToken = env('API_PLATE_DEVICE_TOKEN');
-        $apiUrl = "https://cluster.apigratis.com/api/v2/vehicles/dados";
+        $apiUrl = "https://gateway.apibrasil.io/api/v2/vehicles/base/000/dados";
 
         try {
             $response = Http::withHeaders([
                 'Authorization' => "Bearer $bearerToken",
-                'DeviceToken' => $deviceToken,
+                //'DeviceToken' => $deviceToken,
                 'Content-Type' => 'application/json',
                 'Accept' => 'application/json',
             ])->get($apiUrl, [
@@ -34,7 +34,7 @@ class ApiPlateService
             ]);
 
             if ($response->successful() && !$response->json('error')) {
-                return $response->json('response') ?? false;
+                return $response->json('data') ?? false;
             }
 
             return false;
@@ -60,14 +60,13 @@ class ApiPlateService
      * @throws \Exception Se o motor de detecção configurado não for válido.
      */
     public static function detectLicensePlate($imagePath){
-        return "FOS0G08";
         $engine = env('DETECT_PLATE_ENGINE', 'ollama');
 
-        /* if($engine == 'aws')
+        if($engine == 'aws')
             return self::detectLicensePlateAWS($imagePath);
         else if($engine == 'alpr')
             return self::detectLicensePlateALPR($imagePath);
-        else */
+        else
             return self::detectLicensePlateOLLAMA($imagePath);
 
     }
