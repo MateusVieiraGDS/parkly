@@ -14,7 +14,7 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     //redireciona para o dashboard
-    return redirect()->route('dashboard.index');
+    return Inertia::render('Home');
 });
 
 

@@ -59,7 +59,7 @@ export default function AuthenticatedLayout({ children, showTitle = true }: Prop
           <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6"> 
             {getTitle()}           
             <div
-              className="flex flex-1 items-center justify-center" x-chunk="dashboard-02-chunk-1"
+              className="flex flex-1 justify-center" x-chunk="dashboard-02-chunk-1"
             >
               {children}
             </div>
