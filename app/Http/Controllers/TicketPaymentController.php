@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ticket;
+use App\Models\TicketPayment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -41,7 +42,13 @@ class TicketPaymentController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $ticket = Ticket::with('payment', 'client', 'image', 'car')->find($id);
+
+        if (!$ticket) {
+            return response()->json(['error' => 'Ticket não encontrado'], 404);
+        }
+
+        return response()->json($ticket);
     }
 
     /**
@@ -57,7 +64,23 @@ class TicketPaymentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $ticket = Ticket::findOrFail($id);
+
+        $ticketHasPayment = TicketPayment::where('ticket_id', $ticket->id)->first();
+
+        if($ticketHasPayment) {
+            return redirect()->back()->withErrors(['ticket' => 'Esse ticket já foi pago']);
+        }
+
+        TicketPayment::create([
+            'ticket_id' => $ticket->id,
+        ]);
+
+        $ticket->update([
+            'saida' => now()->format('Y-m-d H:i:s')
+        ]);
+
+        return redirect()->back()->with('ticket', 'Ticket pago com sucesso');
     }
 
     /**

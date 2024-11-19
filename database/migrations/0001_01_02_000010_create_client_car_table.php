@@ -13,14 +13,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('park_configs', function (Blueprint $table) {
+        Schema::create('client_car', function (Blueprint $table) {
             $table->id();
+
+            $table->foreignId('car_id');
+            $table->foreign("car_id")->references('id')->on('cars');
             
-            $table->integer('vagas')->unsigned();
-            $table->decimal('valor_hora', 10, 2);
-            $table->time('abertura');
-            $table->time('fechamento');
-            $table->boolean('is_active')->default(false);
+            $table->foreignId('client_id');
+            $table->foreign("client_id")->references('id')->on('clients');
+            
 
             $table->timestamps();
         });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('park_configs');
+        Schema::dropIfExists('client_plates');
     }
 };

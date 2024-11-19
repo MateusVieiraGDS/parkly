@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\CarController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\Dashboard\DashHomeController;
 use App\Http\Controllers\Dashboard\MembersController;
+use App\Http\Controllers\ParkConfigController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketPaymentController;
 use Illuminate\Foundation\Application;
@@ -25,6 +28,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DashHomeController::class, 'index'])->name('index');
 
         Route::resource('saidas', TicketPaymentController::class);
+
+        Route::resource('mensalistas', ClientController::class)->only([
+            'index', 'store', 'update', 'destroy'
+        ]);
+        Route::post('mensalistas/{clientId}/add-car', [ClientController::class, 'addCars'])->name('mensalistas.addCars');
+        Route::get('mensalistas/get-cars', [ClientController::class, 'getCars'])->name('mensalistas.getCars');
+        Route::delete('mensalistas/{clientId}/remove-car/{carId}', [ClientController::class, 'removeCar'])->name('mensalistas.removeCar');
+
+        Route::get('carros', [CarController::class, 'index'])->name('carros.index');
+
+        Route::resource('configuracoes', ParkConfigController::class)->except(['create', 'show']);
+        Route::post('configuracoes/{id}/activate', [ParkConfigController::class, 'activate'])->name('configuracoes.activate');
     });
     
     
