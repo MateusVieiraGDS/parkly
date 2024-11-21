@@ -1,4 +1,5 @@
 import cv2
+import os
 import threading
 from api_handler import ApiHandler
 from print_handler import PrintHandler
@@ -39,7 +40,10 @@ class MainHandler:
         self.cancela_handler.fechar_conexao()
 
     def processar_entrada(self, frame):        
-        image_path = "captured_image.jpg"
+        image_dir = "temp"
+        image_path = os.path.join(image_dir, "captured_image.jpg")
+        if not os.path.exists(image_dir):
+            os.makedirs(image_dir)
         cv2.imwrite(image_path, frame)
         print("Imagem capturada.")
         threading.Thread(target=self.process_image, args=(image_path,), daemon=True).start()

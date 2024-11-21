@@ -12,9 +12,10 @@ class ApiHandler:
 
         try:
             url = "http://localhost/api/checkin"
+            headers = {'X-API-KEY': "wtrm87y2eez2Ulhq2ez2Ul3y2e98kc3KF"}
             with open(image_path, 'rb') as image_file:
                 files = {'image': image_file}
-                response = requests.post(url, files=files)
+                response = requests.post(url, files=files, headers=headers)
 
             if response.status_code == 201:
                 data = response.json()

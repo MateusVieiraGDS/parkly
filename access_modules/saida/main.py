@@ -15,7 +15,7 @@ class QRCodeCheckoutHandler:
         self.qr_detector = cv2.QRCodeDetector()
 
     def start_camera(self):
-        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
         print("Iniciando a leitura de QR Codes. Pressione 'q' para sair.")
 
         while self.running:

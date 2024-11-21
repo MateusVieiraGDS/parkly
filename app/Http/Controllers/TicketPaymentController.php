@@ -76,10 +76,6 @@ class TicketPaymentController extends Controller
             'ticket_id' => $ticket->id,
         ]);
 
-        $ticket->update([
-            'saida' => now()->format('Y-m-d H:i:s')
-        ]);
-
         return redirect()->back()->with('ticket', 'Ticket pago com sucesso');
     }
 

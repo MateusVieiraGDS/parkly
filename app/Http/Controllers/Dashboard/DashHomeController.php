@@ -29,7 +29,7 @@ class DashHomeController extends Controller
     
         // Receita do dia
         $receitaDoDia = Ticket::selectRaw("
-                SUM(TIMESTAMPDIFF(HOUR, created_at, saida) * valor_hora) as receita_total
+                SUM(IF(TIMESTAMPDIFF(HOUR, created_at, saida) < 1, 1, TIMESTAMPDIFF(HOUR, created_at, saida)) * valor_hora) as receita_total
             ")
             ->whereDate('saida', Carbon::today())
             ->first()

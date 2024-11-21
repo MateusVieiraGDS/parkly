@@ -12,8 +12,9 @@ class ApiHandler:
 
         try:
             url = "http://localhost/api/checkout"
+            headers = {'X-API-KEY': "wtrm87y2eez2Ulhq2ez2Ul3y2e98kc3KF"}
             payload = {"data": qr_data}
-            response = requests.post(url, json=payload)
+            response = requests.post(url, json=payload, headers=headers)
 
             if response.status_code in [200, 422]:
                 data = response.json()

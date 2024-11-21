@@ -18,3 +18,8 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/access_modules/temp
+/access_modules/entrada/temp
+/access_modules/saida/temp
+/access_modules/entrada/__pycache__
+/access_modules/saida/__pycache__

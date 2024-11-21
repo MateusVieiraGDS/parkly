@@ -30,7 +30,6 @@ return new class extends Migration
             $table->dateTime("saida")->nullable();
 
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

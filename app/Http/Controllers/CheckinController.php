@@ -138,6 +138,13 @@ class CheckinController extends Controller
                 "message" => "Esse ticket está em aberto... por favor dirija-se á um dos caixas.",
             ], 422);
 
+        //Verifica se o ticket já foi fechado
+        if($ticket->saida)
+            return response()->json([
+                "success" => false,
+                "message" => "Esse ticket já foi fechado... por favor dirija-se á um dos caixas.",
+            ], 422);
+
         $ticket->update(['saida' => now()]);
 
         //retorna 200 para abrir a cancela e coloca o carimbo de dia e hora no campo saida

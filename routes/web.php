@@ -37,6 +37,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('mensalistas/{clientId}/remove-car/{carId}', [ClientController::class, 'removeCar'])->name('mensalistas.removeCar');
 
         Route::get('carros', [CarController::class, 'index'])->name('carros.index');
+        Route::post('carros', [CarController::class, 'store'])->name('carros.store');
 
         Route::resource('configuracoes', ParkConfigController::class)->except(['create', 'show']);
         Route::post('configuracoes/{id}/activate', [ParkConfigController::class, 'activate'])->name('configuracoes.activate');

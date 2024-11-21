@@ -15,7 +15,12 @@ class PrintHandler:
         qr.add_data(json_data)
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
-        qr_image_path = "qrcode.bmp"
+        
+        image_dir = "temp"
+        qr_image_path = os.path.join(image_dir, "qrcode.bmp")
+        if not os.path.exists(image_dir):
+            os.makedirs(image_dir)
+
         img.save(qr_image_path, "BMP")
         print("QR Code gerado.")
         return qr_image_path
@@ -59,7 +64,11 @@ class PrintHandler:
             draw.text((text_x, text_y), text, fill="black", font=font)
 
             # Salvar a imagem final
-            final_image_path = "qrcode_with_text.bmp"
+            image_dir = "temp"
+            final_image_path = os.path.join(image_dir, "qrcode_with_text.bmp")
+            if not os.path.exists(image_dir):
+                os.makedirs(image_dir)
+
             final_img.save(final_image_path, "BMP")
 
             # Abrir a imagem no visualizador padrão do sistema

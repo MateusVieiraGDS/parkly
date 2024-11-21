@@ -103,6 +103,7 @@ const DashboardPayment = ({ tickets }: any) => {
           <thead className="bg-gray-100">
             <tr>
               <th className="px-4 py-2 text-center font-semibold">ID</th>
+              <th className="px-4 py-2 text-center font-semibold">Placa</th>
               <th className="px-4 py-2 text-center font-semibold">Valor Hora</th>
               <th className="px-4 py-2 text-center font-semibold">Data de Entrada</th>
               <th className="px-4 py-2 text-center font-semibold">Status de Pagamento</th>
@@ -115,6 +116,9 @@ const DashboardPayment = ({ tickets }: any) => {
               <tr key={ticket.id} className="hover:bg-gray-50">
                 {/* ID do Ticket */}
                 <td className="px-4 py-2">{ticket.id}</td>
+
+                {/* Placa */}
+                <td className="px-4 py-2">{ticket?.car?.plate ?? <span className="opacity-40 select-none">- - - - - -</span>}</td>
 
                 {/* Valor Hora */}
                 <td className="px-4 py-2">R$ {ticket.valor_hora}</td>
