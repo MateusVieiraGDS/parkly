@@ -44,6 +44,9 @@ O Modelo usado para o projeto é o llama3.2-vision
 
 # Instruções de Uso do Projeto Parkly
 
+## Vídeo de Apresentação:
+https://drive.google.com/file/d/1qLcuWyVtbkmUCqIR5L_KurbMBN4uOoW1/view
+
 ## Passos para Configuração e Execução
 
 ### 1. Clone o Repositório
