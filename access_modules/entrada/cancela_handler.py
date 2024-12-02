@@ -1,9 +1,12 @@
 import serial
 import time
+import os
 
 class CancelaHandler:
     def __init__(self, porta='COM4', baudrate=115200):
         try:
+            os.system(f"mode {porta} baud={baudrate}")
+            
             self.esp = serial.Serial(porta, baudrate, timeout=15)
             self.esp.rts = False
             self.esp.dtr = False
@@ -40,8 +43,27 @@ class CancelaHandler:
 
     def fechar_conexao(self):
         if self.esp:
-            self.esp.close()
-            print("Conexão encerrada.")
+            try:
+                print("Encerrando conexão.....")
+                
+                # Ativar DTR para resetar e depois desativar
+                self.esp.dtr = True
+                self.esp.rts = True
+                time.sleep(0.5)
+                
+                self.esp.dtr = False
+                self.esp.rts = False
+                
+                # Fechar a conexão
+                self.esp.close()
+                del self.esp
+                
+                # Aguarda o sistema operacional liberar a porta
+                time.sleep(2)
+
+                print("Conexão encerrada e porta liberada.")
+            except Exception as e:
+                print(f"Erro ao encerrar conexão: {e}")
 
     def _ler_serial(self):
         try:

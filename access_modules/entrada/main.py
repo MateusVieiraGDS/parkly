@@ -11,7 +11,7 @@ class MainHandler:
         self.api_handler = ApiHandler()
         self.print_handler = PrintHandler()
         self.speech_handler = SpeechHandler()
-        self.cancela_handler = CancelaHandler(porta='COM4', baudrate=9600)
+        self.cancela_handler = CancelaHandler(porta='COM6')
         self.running = True
 
     def start_camera(self):

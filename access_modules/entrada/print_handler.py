@@ -31,7 +31,7 @@ class PrintHandler:
         mantendo a proporção original e centralizando na página.
         """
         try:
-            printer_name = "EPSON09C9F7 (L375 Series) (Copiar 2)"
+            printer_name = "MP-4200 TH"
 
             # Abrir a imagem do QR Code
             img = Image.open(qr_image_path)
@@ -41,7 +41,7 @@ class PrintHandler:
 
             # Carregar a fonte
             try:
-                font = ImageFont.truetype("arial.ttf", 20)
+                font = ImageFont.truetype("arial.ttf", 40)
             except IOError:
                 font = ImageFont.load_default()
 
@@ -72,7 +72,7 @@ class PrintHandler:
             final_img.save(final_image_path, "BMP")
 
             # Abrir a imagem no visualizador padrão do sistema
-            os.startfile(final_image_path)
+            #os.startfile(final_image_path)
             print("Imagem aberta no visualizador de imagens.")
 
             # Configurar a impressora e enviar a imagem para impressão
@@ -83,10 +83,10 @@ class PrintHandler:
             hDC.StartPage()
 
             # Definir o tamanho desejado para impressão (mantendo proporção)
-            print_width = int(width * 0.8)  # Reduz o tamanho para 50%
-            print_height = int(total_height * 0.8)
+            print_width = int(width) 
+            print_height = int(total_height) # * 0.8
             pos_x = (hDC.GetDeviceCaps(8) - print_width) // 2  # Centraliza horizontalmente
-            pos_y = (hDC.GetDeviceCaps(10) - print_height) // 2  # Centraliza verticalmente
+            pos_y = 0# (hDC.GetDeviceCaps(10) - print_height) // 2  # Centraliza verticalmente
 
             # Desenhar a imagem na posição calculada
             dib = ImageWin.Dib(Image.open(final_image_path))

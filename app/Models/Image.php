@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 
 class Image extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'pathname',

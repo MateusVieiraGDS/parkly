@@ -59,16 +59,17 @@ class ApiPlateService
      *
      * @throws \Exception Se o motor de detecção configurado não for válido.
      */
-    public static function detectLicensePlate($imagePath){
+    public static function detectLicensePlate($imagePath)
+    {
         $engine = env('DETECT_PLATE_ENGINE', 'ollama');
 
-        if($engine == 'aws')
+
+        if ($engine == 'aws')
             return self::detectLicensePlateAWS($imagePath);
-        else if($engine == 'alpr')
+        else if ($engine == 'alpr')
             return self::detectLicensePlateALPR($imagePath);
         else
             return self::detectLicensePlateOLLAMA($imagePath);
-
     }
 
     /**
@@ -82,7 +83,7 @@ class ApiPlateService
         $ollamaUrl = 'http://172.26.10.234:11434/api/chat';
         $model = 'llama3.2-vision';
 
-        //try {
+        try {
             // Otimiza a imagem usando funções nativas do PHP
             $base64Image = self::optimizeImageNative($imagePath);
 
@@ -124,11 +125,11 @@ class ApiPlateService
             $recognizedText = str_replace([' ', '-'], ['', ''], strtoupper($recognizedText));
 
             return !empty($recognizedText) ? $recognizedText : null;
-        /* } catch (\Exception $e) {
+        } catch (\Exception $e) {
             Log::error("Erro ao enviar imagem para Ollama: " . $e->getMessage());
             return null;
-        } */
-    }    
+        }
+    }
 
 
     /**
@@ -170,11 +171,11 @@ class ApiPlateService
             foreach ($result['TextDetections'] as $text) {
                 $detectedText = $text['DetectedText'];
                 $detectedText = str_replace([' ', '-'], ['', ''], strtoupper($detectedText));
-                // Padrão para placa de veículo brasileiro (ex: ABC1D23)
                 
-                if (preg_match('/^[A-Z]{3}\d[A-Z]\d{2}$/', $detectedText) 
-                    || preg_match('/^[A-Z]{3}\d{4}$/', $detectedText)) {
-                    
+                if (
+                    preg_match('/^[A-Z]{3}\d{4}$/', $detectedText) ||  // Placas antigas (AAA1234)
+                    preg_match('/^[A-Z]{3}\d[A-Z]\d{2}$/', $detectedText)
+                ) {
                     return $detectedText;
                 }
             }
@@ -204,8 +205,10 @@ class ApiPlateService
         $response = Http::withHeaders([
             'Authorization' => "Token $apiKey",
         ])->attach(
-            'upload', file_get_contents($imagePath), basename($imagePath)
+            'upload',
+            file_get_contents(Storage::disk('do')->url($imagePath))
         )->post($url);
+
 
         // Verifica se a requisição foi bem-sucedida
         if ($response->successful()) {

@@ -45,6 +45,7 @@ class FetchPlateDataJob implements ShouldQueue
             $car = Car::firstOrCreate([
                 'plate' => $this->plate,
             ]);
+            
             $car->fillFromApiResponse($apiPlate->id, $apiPlate->data);
             $car->save();
             
